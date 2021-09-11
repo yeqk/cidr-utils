@@ -1,0 +1,54 @@
+html {
+  font-family: monospace;
+
+  font-size: 30px;
+}
+
+#popup-content {
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#decimal {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#decimal > input {
+  font: inherit;
+  border: 1px solid;
+  border-radius: 0.1rem;
+  width: 2rem;
+  font-size: inherit;
+  text-align: center;
+}
+
+#binary {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+div.dot {
+  padding: 0 0.1rem;
+}
+
+#binary .text {
+  border: 1px solid;
+  border-radius: 0.1rem;
+  width: 6rem;
+  text-align: center;
+}
+
+.gray-text {
+  color: gray;
+}
+
+#binary > .error {
+  border: 2px solid red;
+}
