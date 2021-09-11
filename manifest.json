@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "CIDR Utils",
+  "version": "1.0",
+
+  "description": "A basic CIDR utility to check basic info like IP range and subnet mask.",
+  "icons": {
+    "72": "icons/ip.png"
+  },
+
+  "browser_action": {
+    "default_icon": {
+      "72": "icons/ip.png"
+    },
+    "default_title": "CIDR Utils",
+    "default_popup": "popups/cidr-utils.html"
+  }
+}
