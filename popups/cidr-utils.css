@@ -45,10 +45,10 @@ div.dot {
   text-align: center;
 }
 
-.gray-text {
+.out-range-text {
   color: gray;
 }
 
 #binary > .error {
-  border: 2px solid red;
+  border: 0.1rem solid red;
 }
