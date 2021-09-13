@@ -52,3 +52,11 @@ div.dot {
 #binary > .error {
   border: 0.1rem solid red;
 }
+
+#extra-info {
+  font-size: 0.75rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

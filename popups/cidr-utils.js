@@ -8,7 +8,7 @@ let currentSuffix = 0;
 let currentBin = ["00000000", "00000000", "00000000", "00000000"];
 
 // Length of the first span element for binaryPart that consists of 2 span
-let multiPartOffset = {};
+let multiPartOffset = { index: 0, offset: 0 };
 let previousPos = 0;
 
 let cidrParts = document.querySelectorAll("#decimal > input:not(:last-child)");
@@ -59,32 +59,29 @@ for (const [i, binaryPart] of binaryParts.entries()) {
   });
 
   binaryPart.addEventListener("input", (e) => {
-    if (isValidOctet(e.target.innerText)) {
+    if (isValidOctet(e.target.textContent)) {
       removeRedBorderCss(e.target);
-      let decimalValue = parseInt(e.target.innerText, 2);
+      let decimalValue = parseInt(e.target.textContent, 2);
       cidrParts[i].value = decimalValue;
-      currentBin[i] = e.target.innerText;
+      currentBin[i] = e.target.textContent;
     } else {
       if (!e.target.className.includes(CSS_ERROR_CLASS)) {
         applyRedBorderCss(e.target);
       }
-      let value = e.target.innerText.replace(/[^0-1]/g, "");
+      let value = e.target.textContent.replace(/[^0-1]/g, "");
       // Avoid the caret being moved to the left side when there is no content
-      if (value.length === 0) {
-        var dateSpan = document.createElement("span");
-        e.target.appendChild(dateSpan);
+      if (value.length != 0) {
+        e.target.textContent = value;
       }
       // Cannot exceed 8 binary characters
       else if (value.length > 8) {
-        e.target.innerText = currentBin[i];
+        e.target.textContent = currentBin[i];
         keyDownPos -= 1;
         removeRedBorderCss(e.target);
-      } else {
-        e.target.innerText = value;
       }
-      // When change innerText, the cursor moves to the start automatically
     }
     setBinaryRangeColor();
+    // When change innerText, the cursor moves to the start automatically
     setCaretPosition(e.target, keyDownPos);
   });
 }
@@ -109,7 +106,7 @@ function toFormattedBinary(decimalValue) {
 function initializeValues() {
   cidrParts.forEach((p) => (p.value = 0));
   suffix.value = 0;
-  binaryParts.forEach((p) => (p.innerText = toFormattedBinary(0)));
+  binaryParts.forEach((p) => (p.textContent = toFormattedBinary(0)));
   setBinaryRangeColor();
 }
 
