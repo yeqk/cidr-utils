@@ -15,6 +15,13 @@ let cidrParts = document.querySelectorAll("#decimal > input:not(:last-child)");
 let suffix = document.querySelector("#decimal > input:last-child");
 let binaryParts = document.querySelectorAll("#binary > .text");
 
+let netmask = document.querySelector("#netmask > span");
+let network = document.querySelector("#network > span");
+let broadcast = document.querySelector("#broadcast > span");
+let firstAddress = document.querySelector("#first-address > span");
+let lastAddress = document.querySelector("#last-address > span");
+let numAddresses = document.querySelector("#num-address > span");
+
 let keyDownPos = 0;
 
 initializeValues();
@@ -27,10 +34,12 @@ for (const [i, cidrPart] of cidrParts.entries()) {
     }
     e.target.value = currentParts[i];
 
-    binaryParts[i].innerText = toFormattedBinary(+e.target.value);
+    binaryParts[i].textContent = toFormattedBinary(+e.target.value);
+    currentBin[i] = binaryParts[i].textContent;
     if (isValidOctet(binaryParts[i].innerText)) {
       removeRedBorderCss(binaryParts[i]);
     }
+    setExtraInfo();
   });
 }
 
@@ -41,6 +50,7 @@ suffix.addEventListener("input", (e) => {
     setBinaryRangeColor();
   }
   e.target.value = currentSuffix;
+  setExtraInfo();
 });
 
 for (const [i, binaryPart] of binaryParts.entries()) {
@@ -83,6 +93,7 @@ for (const [i, binaryPart] of binaryParts.entries()) {
     setBinaryRangeColor();
     // When change innerText, the cursor moves to the start automatically
     setCaretPosition(e.target, keyDownPos);
+    setExtraInfo();
   });
 }
 
@@ -108,6 +119,7 @@ function initializeValues() {
   suffix.value = 0;
   binaryParts.forEach((p) => (p.textContent = toFormattedBinary(0)));
   setBinaryRangeColor();
+  setExtraInfo();
 }
 
 //target could be a div with one span, two span or text as child.
@@ -120,9 +132,7 @@ function setCaretPosition(target, position) {
     target.childNodes.length > 1 &&
     position > multiPartOffset.offset
   ) {
-    console.log(target.childNodes[1].firstChild);
     let newPos = position - multiPartOffset.offset;
-    console.log(newPos);
     range.setStart(target.childNodes[1].firstChild, newPos);
   } else if (target.firstChild.nodeName === "SPAN") {
     range.setStart(target.firstChild.firstChild, position);
@@ -159,4 +169,72 @@ function setBinaryRangeColor() {
       binaryParts[i].textContent = value;
     }
   }
+}
+
+function setExtraInfo() {
+  netmask.textContent = binaryToFormattedIpString(getNetmaks());
+  network.textContent = binaryToFormattedIpString(getNetwork());
+  broadcast.textContent = binaryToFormattedIpString(getBoradcast());
+  firstAddress.textContent = getFirstAddress();
+  lastAddress.textContent = getLastAddress();
+  numAddresses.textContent =
+    currentSuffix > 30 ? 0 : 2 ** (32 - currentSuffix) - 2;
+  console.log(numAddresses);
+}
+
+function getNetmaks() {
+  return "1".repeat(currentSuffix) + "0".repeat(32 - currentSuffix);
+}
+
+function getNetwork() {
+  return (
+    currentBin.join("").slice(0, currentSuffix) + "0".repeat(32 - currentSuffix)
+  );
+}
+
+function getBoradcast() {
+  return (
+    currentBin.join("").slice(0, currentSuffix) + "1".repeat(32 - currentSuffix)
+  );
+}
+
+function getFirstAddress() {
+  if (currentSuffix > 30) {
+    return binaryToFormattedIpString("0".repeat(32));
+  } else {
+    let result = parseInt(getNetwork(), 2) + 1;
+    return binaryToFormattedIpString(decimalToFormattedBinary(result));
+  }
+}
+
+function getLastAddress() {
+  if (currentSuffix > 30) {
+    return binaryToFormattedIpString("0".repeat(32));
+  } else {
+    let result = parseInt(getBoradcast(), 2) - 1;
+    return binaryToFormattedIpString(decimalToFormattedBinary(result));
+  }
+}
+
+function splitArrayIntoChunksOfLen(arr, len) {
+  var chunks = [],
+    i = 0,
+    n = arr.length;
+  while (i < n) {
+    chunks.push(arr.slice(i, (i += len)));
+  }
+  return chunks;
+}
+
+// Convert a 32 bit length binary string to formatted IP string
+function binaryToFormattedIpString(binaryString) {
+  return splitArrayIntoChunksOfLen(binaryString, 8)
+    .map((x) => parseInt(x, 2))
+    .join(".");
+}
+
+// Convert a decimal to 32 bit length binary string
+function decimalToFormattedBinary(decimalNum) {
+  let binaryStr = decimalNum.toString(2);
+  return "0".repeat(32 - binaryStr.length).concat(binaryStr);
 }
