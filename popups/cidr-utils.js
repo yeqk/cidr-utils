@@ -39,6 +39,7 @@ for (const [i, cidrPart] of cidrParts.entries()) {
     if (isValidOctet(binaryParts[i].innerText)) {
       removeRedBorderCss(binaryParts[i]);
     }
+    setBinaryRangeColor();
     setExtraInfo();
   });
 }
@@ -69,25 +70,29 @@ for (const [i, binaryPart] of binaryParts.entries()) {
   });
 
   binaryPart.addEventListener("input", (e) => {
-    if (isValidOctet(e.target.textContent)) {
+    let value = e.target.innerText.replace(/[^0-1]/g, "");
+
+    if (isValidOctet(value)) {
       removeRedBorderCss(e.target);
-      let decimalValue = parseInt(e.target.textContent, 2);
+      let decimalValue = parseInt(value, 2);
       cidrParts[i].value = decimalValue;
-      currentBin[i] = e.target.textContent;
+      currentBin[i] = value;
+      e.target.textContent = value;
     } else {
       if (!e.target.className.includes(CSS_ERROR_CLASS)) {
         applyRedBorderCss(e.target);
       }
-      let value = e.target.textContent.replace(/[^0-1]/g, "");
-      // Avoid the caret being moved to the left side when there is no content
-      if (value.length != 0) {
-        e.target.textContent = value;
+      // Avoid caret being misplaced
+      if (value.length === 0) {
+        e.target.innerHTML = "<br>";
       }
       // Cannot exceed 8 binary characters
       else if (value.length > 8) {
         e.target.textContent = currentBin[i];
         keyDownPos -= 1;
         removeRedBorderCss(e.target);
+      } else {
+        e.target.textContent = value;
       }
     }
     setBinaryRangeColor();
@@ -179,7 +184,6 @@ function setExtraInfo() {
   lastAddress.textContent = getLastAddress();
   numAddresses.textContent =
     currentSuffix > 30 ? 0 : 2 ** (32 - currentSuffix) - 2;
-  console.log(numAddresses);
 }
 
 function getNetmaks() {

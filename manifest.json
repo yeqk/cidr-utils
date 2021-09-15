@@ -14,5 +14,10 @@
     },
     "default_title": "CIDR Utils",
     "default_popup": "popups/cidr-utils.html"
+  },
+
+  "options_ui": {
+    "page": "options/options.html",
+    "browser_style": true
   }
 }
