@@ -1,0 +1,13 @@
+body {
+  margin: 0.25rem;
+}
+
+form > div {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1rem;
+}
+
+input {
+  width: 50%;
+}

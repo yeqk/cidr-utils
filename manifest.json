@@ -19,5 +19,13 @@
   "options_ui": {
     "page": "options/options.html",
     "browser_style": true
+  },
+
+  "permissions": ["storage"],
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cidr-utisl@yeqk97.github.io"
+    }
   }
 }
