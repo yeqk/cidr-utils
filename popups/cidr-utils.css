@@ -19,6 +19,7 @@ html {
 }
 
 #decimal > input {
+  background-color: inherit;
   font: inherit;
   border: 1px solid;
   border-radius: 0.1rem;

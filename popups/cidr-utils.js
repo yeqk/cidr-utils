@@ -1,3 +1,5 @@
+import * as constants from "./../defaults.js";
+
 const MAX_OCTET_DECIMAL = 255;
 const MAX_CIDR_SUFFIX = 32;
 const CSS_ERROR_CLASS = " error";
@@ -9,7 +11,6 @@ let currentBin = ["00000000", "00000000", "00000000", "00000000"];
 
 // Length of the first span element for binaryPart that consists of 2 span
 let multiPartOffset = { index: 0, offset: 0 };
-let previousPos = 0;
 
 let cidrParts = document.querySelectorAll("#decimal > input:not(:last-child)");
 let suffix = document.querySelector("#decimal > input:last-child");
@@ -242,3 +243,24 @@ function decimalToFormattedBinary(decimalNum) {
   let binaryStr = decimalNum.toString(2);
   return "0".repeat(32 - binaryStr.length).concat(binaryStr);
 }
+
+function restoreOptions() {
+  browser.storage.sync.get().then((res) => {
+    document.body.style.background =
+      res.background || constants.DEFAULT_BACKGROUND_COLOR;
+    document.body.style.color = res.font || constants.DEFAULT_FONT_COLOR;
+    let parts = res.cidr.split(/[.\/]/) || constants.DEFAULT_CIDR;
+    suffix.value = parts[4];
+    suffix.dispatchEvent(new Event("input"));
+    for (let i = 0; i < 4; i++) {
+      cidrParts[i].value = parts[i];
+      cidrParts[i].dispatchEvent(new Event("input"));
+    }
+  }, onError);
+}
+
+function onError(error) {
+  console.log(`Error: ${error}`);
+}
+
+restoreOptions();

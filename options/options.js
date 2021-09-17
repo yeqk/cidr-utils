@@ -1,6 +1,4 @@
-const DEFAULT_BACKGROUND_COLOR = "#f5f0da";
-const DEFAULT_FONT_COLOR = "#000000";
-const DEFAULT_CIDR = "192.168.0.0/24";
+import * as constants from "./../defaults.js";
 
 const background = document.querySelector("#background-color");
 const font = document.querySelector("#font-color");
@@ -19,12 +17,9 @@ function saveOptions(e) {
 
 function restoreOptions() {
   browser.storage.sync.get().then((res) => {
-    console.log("Restoring... ");
-    console.log(res);
-    background.value = res.background || DEFAULT_BACKGROUND_COLOR;
-    font.value = res.font || DEFAULT_FONT_COLOR;
-    cidr.value = res.cidr || DEFAULT_CIDR;
-    console.log("Restored.");
+    background.value = res.background || constants.DEFAULT_BACKGROUND_COLOR;
+    font.value = res.font || constants.DEFAULT_FONT_COLOR;
+    cidr.value = res.cidr || constants.DEFAULT_CIDR;
   }, onError);
 }
 
