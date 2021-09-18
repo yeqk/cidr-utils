@@ -21,6 +21,7 @@ html {
 #decimal > input {
   background-color: inherit;
   font: inherit;
+  color: inherit;
   border: 1px solid;
   border-radius: 0.1rem;
   width: 2rem;

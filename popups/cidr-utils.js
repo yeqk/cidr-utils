@@ -23,6 +23,8 @@ let firstAddress = document.querySelector("#first-address > span");
 let lastAddress = document.querySelector("#last-address > span");
 let numAddresses = document.querySelector("#num-address > span");
 
+const inputs = document.querySelectorAll("input");
+
 let keyDownPos = 0;
 
 initializeValues();
@@ -117,7 +119,7 @@ function isValidOctet(binOct) {
 
 function toFormattedBinary(decimalValue) {
   let binaryValue = decimalValue.toString(2);
-  return "00000000".substr(binaryValue.length) + binaryValue;
+  return "0".repeat(8).substr(binaryValue.length) + binaryValue;
 }
 
 function initializeValues() {
@@ -244,12 +246,18 @@ function decimalToFormattedBinary(decimalNum) {
   return "0".repeat(32 - binaryStr.length).concat(binaryStr);
 }
 
+// SAVE AND RESTORE
+
 function restoreOptions() {
   browser.storage.sync.get().then((res) => {
     document.body.style.background =
       res.background || constants.DEFAULT_BACKGROUND_COLOR;
+    inputs.forEach((i) => {
+      i.style.borderColor = res.font || constants.DEFAULT_FONT_COLOR;
+    });
     document.body.style.color = res.font || constants.DEFAULT_FONT_COLOR;
-    let parts = res.cidr.split(/[.\/]/) || constants.DEFAULT_CIDR;
+    let cidr = res.userCidr || res.cidr || constants.DEFAULT_CIDR;
+    let parts = cidr.split(/[.\/]/);
     suffix.value = parts[4];
     suffix.dispatchEvent(new Event("input"));
     for (let i = 0; i < 4; i++) {
@@ -259,8 +267,22 @@ function restoreOptions() {
   }, onError);
 }
 
+function saveCidr() {
+  let userCidr = currentParts.join(".");
+  userCidr += "/" + currentSuffix;
+  browser.storage.sync.set({ userCidr: userCidr }).then(setItem, onError);
+}
+
+restoreOptions();
+
+let decimal = document.querySelector("#decimal");
+decimal.addEventListener("change", saveCidr);
+decimal.addEventListener("input", saveCidr);
+
 function onError(error) {
   console.log(`Error: ${error}`);
 }
 
-restoreOptions();
+function setItem() {
+  console.log("Item saved");
+}
